@@ -20,32 +20,24 @@ const styles = theme => ({
   }
 })
 
-
-
-
-const customers =
-  [
-    {
-      'id':1,
-      'name':'홍길동',
-      'birthday':'123125'
-},
-{
-  'id':2,
-  'name':'홍상삼',
-  'birthday':'343453'
-},
-{
-  'id':3,
-  'name':'홍준표',
-  'birthday':'564731'
-},
-
-  ]
-
-
 class App extends Component{
   
+  state = {
+    customers:""
+  }
+
+  componentDidMount(){
+    this.callApi()
+    .then(res=> this.setState({customers:res.express}))
+    .catch(err=> console.log(err))
+
+  }
+
+  callApi = async()=>{
+    const response = await fetch('/api/customers');
+    const body = await response.json();
+    return body;
+  }
   // state= {
   //   customers:""
   // }
@@ -65,17 +57,21 @@ class App extends Component{
 
   render(){
     const { classes} = this.props;
-
     return (
+      <div>
       <Paper className = {classes.root}>
         <Table className = {classes.table}>
+          <TableHead>
           <TableRow>
             <TableCell>번호</TableCell>
             <TableCell>이름</TableCell>
             <TableCell>생일</TableCell>
           </TableRow>
+          </TableHead>
+          
           <TableBody>
-        {customers.map(c=>{
+        {
+          this.state.customers ? this.state.customers.map(c=>{
             return ( 
               <Customer
                 key={c.id}
@@ -84,11 +80,12 @@ class App extends Component{
                 birthday={c.birthday}
               />
               )
-          }
-          )} 
+          }) : ""
+        } 
           </TableBody>
           </Table>
       </Paper>
+      </div>
     )
   }
 }
